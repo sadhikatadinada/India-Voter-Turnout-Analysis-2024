@@ -1,5 +1,5 @@
 # =========================
-# 1. LOAD LIBRARIES
+# 1. LIBRARIES
 # =========================
 
 library(tidyverse)
@@ -11,7 +11,7 @@ library(sandwich)
 
 
 # =========================
-# 2. IMPORT DATA
+# 2. DATA
 # =========================
 
 data <- read.csv("psephology.csv")
@@ -60,7 +60,7 @@ print(hac_results)
 
 
 # =========================
-# 5. SAVE MAIN MODEL OUTPUT
+# 5. MAIN MODEL OUTPUT
 # =========================
 
 sink("regression_output.txt")
@@ -75,7 +75,7 @@ sink()
 
 stargazer(model, 
           type = "text", 
-          se = list(sqrt(diag(hac_se))),   # ✅ MODIFIED
+          se = list(sqrt(diag(hac_se))),  
           out = "regression_table.txt")
 
 
@@ -83,7 +83,7 @@ stargazer(model,
 # 6. DIAGNOSTIC TESTS
 # =========================
 
-# Run tests
+# Tests
 jarque.bera.test(residuals(model))
 qqnorm(residuals(model))
 qqline(residuals(model))
@@ -92,7 +92,7 @@ bp_result      <- bptest(model)
 vif_result     <- vif(model)
 
 
-# Print nicely in console
+# Outputs
 cat("\nDIAGNOSTIC TESTS:\n")
 print(shapiro_result)
 print(bp_result)
