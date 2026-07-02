@@ -1,6 +1,4 @@
-# =========================
-# 1. LIBRARIES
-# =========================
+# LIBRARIES
 
 library(tidyverse)
 library(lmtest)
@@ -10,22 +8,16 @@ library(ggplot2)
 library(sandwich)  
 
 
-# =========================
-# 2. DATA
-# =========================
+# DATA
 
 data <- read.csv("psephology.csv")
 
-# Inspect data
 str(data)
 head(data)
 
 
-# =========================
-# 3. DATA CLEANING
-# =========================
+# DATA CLEANING
 
-# Ensure numeric variables
 data$turnout_24  <- as.numeric(data$turnout_24)
 data$turnout_19  <- as.numeric(data$turnout_19)
 data$income_pc   <- as.numeric(data$income_pc)
@@ -34,9 +26,7 @@ data$mpi         <- as.numeric(data$mpi)
 data$regional_24 <- as.numeric(data$regional_24)
 
 
-# =========================
-# 4. MAIN REGRESSION MODEL
-# =========================
+# MAIN REGRESSION MODEL
 
 model <- lm(turnout_24 ~ turnout_19 + income_pc + un_rate + mpi + regional_24, data = data)
 
@@ -48,9 +38,7 @@ stargazer(model,
           out = "ols_regression_table.txt")
 
 
-# =========================
-# 4A. HAC (NEWEY-WEST) 
-# =========================
+# HAC (NEWEY-WEST) 
 
 hac_se <- NeweyWest(model)
 hac_results <- coeftest(model, vcov = hac_se)
@@ -59,9 +47,7 @@ cat("\nHAC (NEWEY-WEST) STANDARD ERRORS:\n")
 print(hac_results)
 
 
-# =========================
-# 5. MAIN MODEL OUTPUT
-# =========================
+# MAIN MODEL OUTPUT
 
 sink("regression_output.txt")
 
@@ -79,9 +65,7 @@ stargazer(model,
           out = "regression_table.txt")
 
 
-# =========================
-# 6. DIAGNOSTIC TESTS
-# =========================
+# DIAGNOSTIC TESTS
 
 # Tests
 jarque.bera.test(residuals(model))
@@ -101,7 +85,7 @@ print(jarque.bera.test)
 print(qqnorm)
 print(qqline)
 
-# Save diagnostics
+
 sink("diagnostics_output.txt")
 
 cat("DIAGNOSTIC TESTS:\n\n")
@@ -118,9 +102,7 @@ print(vif_result)
 sink()
 
 
-# =========================
-# 7. GRAPHS
-# =========================
+# GRAPHS
 
 # Actual vs Fitted
 p1 <- ggplot(data, aes(x = turnout_24, y = fitted(model))) +
@@ -177,9 +159,7 @@ p4 <- ggplot(data, aes(sample = residuals(model))) +
 ggsave("qq_plot.png", plot = p4, width = 6, height = 4)
 
 
-# =========================
-# 8. CHANGE IN TURNOUT MODEL
-# =========================
+# CHANGE IN TURNOUT MODEL
 
 data$turnout_change <- data$turnout_24 - data$turnout_19
 
@@ -189,9 +169,7 @@ cat("\nCHANGE MODEL RESULTS:\n")
 summary(model_change)
 
 
-# =========================
-# 8A. HAC FOR CHANGE MODEL
-# =========================
+# HAC FOR CHANGE MODEL
 
 hac_se_change <- NeweyWest(model_change)
 hac_change_results <- coeftest(model_change, vcov = hac_se_change)
@@ -200,7 +178,6 @@ cat("\nCHANGE MODEL (HAC SE):\n")
 print(hac_change_results)
 
 
-# Save output
 sink("turnout_change_output.txt")
 
 cat("CHANGE MODEL RESULTS:\n")
